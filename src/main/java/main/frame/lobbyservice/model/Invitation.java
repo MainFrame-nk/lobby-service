@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Invitation {
-    private Long lobbyId;
-    private Long playerId;
-}
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
+//public class Invitation {
+//    private Long lobbyId;
+//    private Long playerId;
+//}

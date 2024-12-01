@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
     // Очереди
     public static final String LOBBY_QUEUE = "lobby.queue";
-//    public static final String LOBBY_EVENTS_QUEUE = "lobbyEventsQueue"; // Для событий в лобби
+    public static final String LOBBY_EVENTS_QUEUE = "lobby.events.queue"; // Для событий в лобби
 //    public static final String PLAYER_ACTIONS_QUEUE = "playerActionsQueue"; // Для действий игроков
 
     // Общий обменник

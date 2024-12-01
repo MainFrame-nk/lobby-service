@@ -2,26 +2,26 @@ package main.frame.lobbyservice.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import main.frame.lobbyservice.client.GameServiceClient;
 import main.frame.lobbyservice.client.UserServiceClient;
 import main.frame.lobbyservice.config.RabbitMQConfig;
-import main.frame.lobbyservice.dto.CreateLobbyDTO;
-import main.frame.lobbyservice.dto.LobbyDTO;
-import main.frame.lobbyservice.dto.LobbyPlayerDTO;
+import main.frame.lobbyservice.dto.request.JoinLobbyRequest;
+import main.frame.lobbyservice.dto.request.LeaveLobbyRequest;
+import main.frame.lobbyservice.dto.request.UpdatePlayerStatusRequest;
+import main.frame.lobbyservice.dto.response.CreateLobbyDTO;
+import main.frame.lobbyservice.dto.response.LobbyDTO;
+import main.frame.lobbyservice.dto.response.LobbyPlayerDTO;
 import main.frame.lobbyservice.model.Lobby;
 import main.frame.lobbyservice.model.LobbyPlayer;
 import main.frame.lobbyservice.model.LobbyStatus;
 import main.frame.lobbyservice.model.LobbyUserStatus;
 import main.frame.shared.dto.PlayerDTO;
-import main.frame.shared.dto.UserDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,7 +102,10 @@ public class LobbyServiceImp implements LobbyService{
 
     @Transactional
     @Override
-    public LobbyPlayerDTO joinToLobby(Long lobbyId, Long playerId) {
+    public LobbyPlayerDTO joinToLobby(JoinLobbyRequest request) {
+        Long lobbyId = request.getLobbyId();
+        Long playerId = request.getPlayerId();
+
         Lobby lobby = entityManager.find(Lobby.class, lobbyId);
         if (lobby == null) {
             throw new IllegalArgumentException("Лобби не найдено.");
@@ -138,7 +141,64 @@ public class LobbyServiceImp implements LobbyService{
       //  lobbyPlayer.setTurnOrder(0); // Возможно переделать очередность ходов!
         entityManager.persist(lobbyPlayer);
 
+
+//        Map<String, Object> message = new HashMap<>();
+//        message.put("lobbyId", lobbyId);
+//        message.put("email", email); // Добавляем данные пользователя
+//        rabbitTemplate.convertAndSend(
+//                RabbitMQConfig.EXCHANGE,
+//                RabbitMQConfig.LOBBY_EVENTS_ROUTING_KEY,
+//                message
+//        );
+
+
+        // Отправляем сообщение в RabbitMQ
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.LOBBY_EVENTS_ROUTING_KEY,
+                new LobbyPlayerDTO(
+                        lobbyPlayer.getId(),
+                        lobbyId,
+                        playerId,
+                        LobbyUserStatus.CONNECTED,
+                        null // Очередность можно задать позже
+                )
+        );
+
         return lobbyPlayer.toLobbyPlayerDTO();
+    }
+
+    // Присоединение к лобби
+    public void joinLobby(JoinLobbyRequest request) {
+        // Логика добавления игрока в лобби
+        System.out.println("Игрок с ID " + request.getPlayerId() + " присоединился к лобби " + request.getLobbyId());
+
+        // Отправка сообщения через RabbitMQ
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.LOBBY_EVENTS_ROUTING_KEY,
+                request
+        );
+    }
+
+    // Выход из лобби
+    public void leaveLobby(LeaveLobbyRequest request) {
+        System.out.println("Игрок с ID " + request.getPlayerId() + " покинул лобби " + request.getLobbyId());
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.LOBBY_EVENTS_ROUTING_KEY,
+                request
+        );
+    }
+
+    // Обновление статуса игрока
+    public void updatePlayerStatus(UpdatePlayerStatusRequest request) {
+        System.out.println("Игрок с ID " + request.getPlayerId() + " изменил статус в лобби " + request.getLobbyId());
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.LOBBY_EVENTS_ROUTING_KEY,
+                request
+        );
     }
 
     public long countPlayersInLobby(Long lobbyId) {
@@ -254,8 +314,8 @@ public class LobbyServiceImp implements LobbyService{
 
     @Transactional
     @Override
-    public Lobby connectToPrivateLobby(Long lobbyId, Long userId, String password) {
-        Lobby lobby = entityManager.find(Lobby.class, lobbyId);
+    public Lobby connectToPrivateLobby(JoinLobbyRequest request, String password) {
+        Lobby lobby = entityManager.find(Lobby.class, request.getLobbyId());
         if (lobby == null) {
             throw new IllegalArgumentException("Лобби не найдено.");
         }
@@ -264,7 +324,7 @@ public class LobbyServiceImp implements LobbyService{
             throw new SecurityException("Неверный пароль.");
         }
 
-        joinToLobby(lobbyId, userId);
+        joinToLobby(request);
 
         return lobby;
     }

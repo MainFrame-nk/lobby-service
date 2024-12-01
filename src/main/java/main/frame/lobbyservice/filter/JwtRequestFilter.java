@@ -115,7 +115,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } else {
+                System.out.println("Токен недействителен: " + jwt);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
             }
+
         }
 
         filterChain.doFilter(request, response);

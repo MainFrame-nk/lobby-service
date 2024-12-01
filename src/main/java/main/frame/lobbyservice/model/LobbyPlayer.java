@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import main.frame.lobbyservice.dto.LobbyPlayerDTO;
-
-import java.util.stream.Collectors;
+import main.frame.lobbyservice.dto.response.LobbyPlayerDTO;
 
 @NoArgsConstructor
 @AllArgsConstructor

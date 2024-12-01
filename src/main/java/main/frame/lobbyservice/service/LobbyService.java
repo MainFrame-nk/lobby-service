@@ -1,10 +1,10 @@
 package main.frame.lobbyservice.service;
 
-import main.frame.lobbyservice.dto.CreateLobbyDTO;
-import main.frame.lobbyservice.dto.LobbyDTO;
-import main.frame.lobbyservice.dto.LobbyPlayerDTO;
+import main.frame.lobbyservice.dto.request.JoinLobbyRequest;
+import main.frame.lobbyservice.dto.response.CreateLobbyDTO;
+import main.frame.lobbyservice.dto.response.LobbyDTO;
+import main.frame.lobbyservice.dto.response.LobbyPlayerDTO;
 import main.frame.lobbyservice.model.Lobby;
-import main.frame.lobbyservice.model.LobbyPlayer;
 import main.frame.lobbyservice.model.LobbyStatus;
 import main.frame.lobbyservice.model.LobbyUserStatus;
 
@@ -21,7 +21,7 @@ public interface LobbyService {
     public void deleteLobby(Long lobbyId);
    // public void closeLobby(Long lobbyId);
     public LobbyDTO updateLobby(Long lobbyId, Long hostId, String name, String password, int maxPlayers);
-    public LobbyPlayerDTO joinToLobby(Long lobbyId, Long playerId);
+    public LobbyPlayerDTO joinToLobby(JoinLobbyRequest request);
   //  public List<LobbyDTO> getAvailableLobbies();
     public void disconnectPlayerFromLobby(Long lobbyId, Long userId);
     public List<LobbyPlayerDTO> getPlayersInLobby(Long lobbyId); // Получить игроков в лобби
@@ -31,7 +31,7 @@ public interface LobbyService {
     public void updatePlayerStatus(Long lobbyId, Long userId, LobbyUserStatus status);
     public List<LobbyDTO> filterLobbies(Optional<Integer> minPlayers, Optional<Integer> maxPlayers, Optional<String> gameMode);
     public Lobby createPrivateLobby(String name, String password, Long hostId);
-    public Lobby connectToPrivateLobby(Long lobbyId, Long userId, String password);
+    public Lobby connectToPrivateLobby(JoinLobbyRequest request, String password);
   //  public void inviteUserToLobby(Long lobbyId, Long userId);
   //  public Lobby acceptInvitation(Long lobbyId, Long userId);
   //  public Lobby createRankedLobby(Long ownerId, int minRank, int maxRank); Рейтинговые игры

@@ -15,3 +15,6 @@ spring:
     password: guest
   application:
     name: LobbyService
+
+jwt:
+  secret: U7512_nG32Eu&261hJp-aSd-KjaaDcbQ

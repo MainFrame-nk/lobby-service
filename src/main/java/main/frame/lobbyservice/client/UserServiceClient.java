@@ -26,19 +26,19 @@ public class UserServiceClient {
                 .block();
     }
 
-    public List<UserDTO> getUsersInLobby(List<Long> userIds) {
-        return Flux.fromIterable(userIds)
-                .flatMap(this::fetchUserById) // Асинхронно получаем данные для каждого ID
-                .collectList()
-                .block(); // Собираем результат в список
-    }
-
-    private Mono<UserDTO> fetchUserById(Long userId) {
-        return webClient.get()
-                .uri("/users/{id}", userId)
-                .retrieve()
-                .bodyToMono(UserDTO.class);
-    }
+//    public List<UserDTO> getUsersInLobby(List<Long> userIds) {
+//        return Flux.fromIterable(userIds)
+//                .flatMap(this::fetchUserById) // Асинхронно получаем данные для каждого ID
+//                .collectList()
+//                .block(); // Собираем результат в список
+//    }
+//
+//    private Mono<UserDTO> fetchUserById(Long userId) {
+//        return webClient.get()
+//                .uri("/users/{id}", userId)
+//                .retrieve()
+//                .bodyToMono(UserDTO.class);
+//    }
 
     //    private Boolean checkUserExists(Long userId) {
 //        String userServiceUrl = "http://USER-SERVICE/users/" + userId + "/exists";

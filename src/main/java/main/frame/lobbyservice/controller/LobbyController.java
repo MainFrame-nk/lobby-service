@@ -1,7 +1,8 @@
 package main.frame.lobbyservice.controller;
 
-import main.frame.lobbyservice.dto.CreateLobbyDTO;
-import main.frame.lobbyservice.dto.LobbyDTO;
+import main.frame.lobbyservice.dto.request.JoinLobbyRequest;
+import main.frame.lobbyservice.dto.response.CreateLobbyDTO;
+import main.frame.lobbyservice.dto.response.LobbyDTO;
 import main.frame.lobbyservice.model.Lobby;
 import main.frame.lobbyservice.service.LobbyService;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +55,8 @@ public class LobbyController {
 //    }
 
     @PostMapping("/{lobbyId}/join")
-    public ResponseEntity<Void> joinLobby(@PathVariable Long lobbyId, @RequestParam Long playerId) {
-        lobbyService.joinToLobby(lobbyId, playerId);
+    public ResponseEntity<Void> joinLobby(@RequestBody JoinLobbyRequest request) {
+        lobbyService.joinToLobby(request);
         return ResponseEntity.ok().build();
     }
 

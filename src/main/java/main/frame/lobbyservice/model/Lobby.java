@@ -5,13 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import main.frame.lobbyservice.dto.LobbyDTO;
-import main.frame.shared.dto.PlayerDTO;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import main.frame.lobbyservice.dto.response.LobbyDTO;
 
 @Data
 @NoArgsConstructor
@@ -57,7 +51,7 @@ public class Lobby {
                 this.name,
                 this.maxPlayers,
                 this.status,
-                this.password,
+         //       this.password,
                 this.hostId
         );
     }

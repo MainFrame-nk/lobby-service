@@ -1,4 +1,4 @@
-package main.frame.lobbyservice.dto;
+package main.frame.lobbyservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
